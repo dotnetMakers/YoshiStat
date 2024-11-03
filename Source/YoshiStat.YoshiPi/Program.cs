@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace YoshiStat.DesktopApp;
+namespace YoshiStat.YoshiPi;
 
 internal class Program
 {

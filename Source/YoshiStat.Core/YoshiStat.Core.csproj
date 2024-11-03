@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Contracts" Version="1.15.0" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.15.0" />
+    <Compile Remove="Entities\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <None Remove="Entities\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
+    <PackageReference Include="Meadow.Contracts" Version="1.15.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.15.0" />
   </ItemGroup>
 
 </Project>
