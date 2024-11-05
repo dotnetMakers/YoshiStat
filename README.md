@@ -1,2 +1,2 @@
 # YoshiStat
-YoshiStat repo
+YoshiStat
