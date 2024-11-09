@@ -2,9 +2,9 @@
 using Meadow.Foundation.Displays;
 using YoshiStat.Core;
 
-namespace YoshiStat;
+namespace YoshiStat.DesktopApp;
 
-internal class YoshiStatApp : App<Desktop>
+internal class MeadowApp : App<Desktop>
 {
     private MainController _mainController;
     private DesktopHardware _hardware;
