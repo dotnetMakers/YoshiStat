@@ -15,8 +15,4 @@
     <ProjectReference Include="..\YoshiStat.Core\YoshiStat.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

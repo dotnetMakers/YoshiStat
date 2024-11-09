@@ -15,11 +15,13 @@ internal class DisplayService : IDisplayService
     private AbsoluteLayout _homeLayout;
     private Label _currentTempLabel;
 
-    public DisplayService(IPixelDisplay display)
+    public DisplayService(IPixelDisplay display, RotationType rotation)
     {
         _display = display;
+
         _screen = new DisplayScreen(
-            display);
+            display,
+            rotation);
 
         CreateLayouts();
     }
@@ -34,7 +36,7 @@ internal class DisplayService : IDisplayService
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Font = new Font16x24(),
-            Text = "75"
+            Text = "--"
         };
 
         _homeLayout.Controls.Add(_currentTempLabel);
@@ -49,7 +51,7 @@ internal class DisplayService : IDisplayService
 
     public void UpdateCurrentTemperature(Temperature temperature)
     {
-        throw new NotImplementedException();
+        _currentTempLabel.Text = $"{temperature.Fahrenheit:N1}";
     }
 
     public void UpdateSetPoint(Temperature temperature)

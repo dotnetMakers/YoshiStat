@@ -17,6 +17,7 @@ internal class YoshiStatApp : App<Desktop>
         // create sensors
 
         // create services
+        Resolver.Services.Create<SensorService, ISensorService>();
 
         _mainController = new MainController(_hardware);
 
