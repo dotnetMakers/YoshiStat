@@ -19,6 +19,11 @@ internal class DisplayService : IDisplayService
     {
         _display = display;
 
+        if (_display is IColorInvertableDisplay cid)
+        {
+            cid.InvertDisplayColor(true);
+        }
+
         _screen = new DisplayScreen(
             display,
             rotation);

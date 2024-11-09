@@ -1,4 +1,5 @@
-﻿using YoshiPi;
+﻿using Meadow;
+using YoshiPi;
 using YoshiStat.Core;
 
 namespace YoshiStat.YoshiPi;
@@ -6,17 +7,17 @@ namespace YoshiStat.YoshiPi;
 internal class MeadowApp : YoshiPiApp
 {
     private MainController _mainController;
-    private YoshiPiHardware _hardware;
+    private IYoshiStatHardware _hardware;
 
     public override Task Initialize()
     {
-        // create hardware
+        Resolver.Log.Info("Creating sensor service...");
+        Resolver.Services.Create<SensorService, Core.ISensorService>();
+
+        Resolver.Log.Info("Creating YoshiPi hardware...");
         _hardware = new YoshiPiHardware(Hardware);
 
-        // create sensors
-
-        // create services
-
+        Resolver.Log.Info("Creating Main Controller...");
         _mainController = new MainController(_hardware);
 
         return base.Initialize();
@@ -24,7 +25,8 @@ internal class MeadowApp : YoshiPiApp
 
     public override Task Run()
     {
+        Resolver.Log.Info("Run");
 
-        return base.Run();
+        return _mainController.Run();
     }
 }
