@@ -30,5 +30,4 @@ internal class SensorService : ISensorService
     {
         CurrentTemperatureChanged?.Invoke(this, e.New);
     }
-
 }

@@ -10,7 +10,9 @@ internal class YoshiPiHardware : IYoshiStatHardware
     private IYoshiPiHardware _hardware;
 
     public IPixelDisplay Display => _hardware.Display;
+
     public ITouchScreen TouchScreen => _hardware.Touchscreen;
+
     public RotationType DisplayRotation => RotationType._270Degrees;
 
     public YoshiPiHardware(IYoshiPiHardware hardware)

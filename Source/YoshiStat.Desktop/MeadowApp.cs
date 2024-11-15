@@ -6,19 +6,18 @@ namespace YoshiStat.DesktopApp;
 
 internal class MeadowApp : App<Desktop>
 {
+    private IYoshiStatHardware _hardware;
     private MainController _mainController;
-    private DesktopHardware _hardware;
 
     public override Task Initialize()
     {
-        // create hardware
+        Resolver.Log.Info("Creating Desktop hardware...");
         _hardware = new DesktopHardware(Device);
 
-        // create sensors
-
-        // create services
+        //Resolver.Log.Info("Creating sensor service...");
         Resolver.Services.Create<SensorService, ISensorService>();
 
+        Resolver.Log.Info("Creating Main Controller...");
         _mainController = new MainController(_hardware);
 
         return base.Initialize();

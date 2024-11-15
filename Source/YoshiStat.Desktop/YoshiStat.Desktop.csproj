@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,17 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Services\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Meadow.Desktop" Version="1.15.0" />
+    <PackageReference Include="Meadow.Desktop" Version="1.14.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YoshiStat.Core\YoshiStat.Core.csproj" />
   </ItemGroup>
-
 </Project>
