@@ -85,7 +85,7 @@ internal class DisplayService : IDisplayService
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             Font = font16x24,
-            Text = "75%"
+            Text = "55%"
         };
         _dataLayout.Controls.Add(_currentHumidityLabel);
 
@@ -98,7 +98,7 @@ internal class DisplayService : IDisplayService
             HorizontalAlignment = HorizontalAlignment.Center,
             Font = font16x24,
             ScaleFactor = ScaleFactor.X2,
-            Text = "-°C"
+            Text = "-°F"
         };
         _dataLayout.Controls.Add(_currentTempLabel);
 
@@ -129,6 +129,11 @@ internal class DisplayService : IDisplayService
         _dataLayout.IsVisible = true;
     }
 
+    public void UpdateTime()
+    {
+        _timeLabel.Text = DateTime.Now.ToString("hh:mm tt");
+    }
+
     public void UpdateControlState(ControlState currentState)
     {
         throw new NotImplementedException();
@@ -136,7 +141,12 @@ internal class DisplayService : IDisplayService
 
     public void UpdateCurrentTemperature(Temperature temperature)
     {
-        _currentTempLabel.Text = $"{temperature.Fahrenheit:N0}°C";
+        _currentTempLabel.Text = $"{temperature.Fahrenheit:N0}°F";
+    }
+
+    public void UpdateCurrentHumidity(RelativeHumidity humidity)
+    {
+        _currentHumidityLabel.Text = $"{humidity.Percent:N0}%";
     }
 
     public void UpdateSetPoint(Temperature temperature)

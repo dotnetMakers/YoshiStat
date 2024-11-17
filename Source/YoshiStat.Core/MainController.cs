@@ -25,11 +25,17 @@ public class MainController
             ?? throw new System.Exception("ISensorService not registered");
 
         _sensorService.CurrentTemperatureChanged += OnCurrentTemperatureChanged;
+        _sensorService.CurrentHumidityChanged += OnCurrentHumidityChanged;
     }
 
     private void OnCurrentTemperatureChanged(object sender, Meadow.Units.Temperature e)
     {
         _displayService.UpdateCurrentTemperature(e);
+    }
+
+    private void OnCurrentHumidityChanged(object sender, Meadow.Units.RelativeHumidity e)
+    {
+        _displayService.UpdateCurrentHumidity(e);
     }
 
     public async Task Run()

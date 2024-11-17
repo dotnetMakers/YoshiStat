@@ -6,6 +6,8 @@ namespace YoshiStat.Core;
 public interface IYoshiStatHardware
 {
     IPixelDisplay Display { get; }
+
     ITouchScreen TouchScreen { get; }
+
     RotationType DisplayRotation { get; }
 }

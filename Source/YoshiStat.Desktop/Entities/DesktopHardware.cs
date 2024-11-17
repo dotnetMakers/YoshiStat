@@ -10,6 +10,7 @@ internal class DesktopHardware : IYoshiStatHardware
     public IPixelDisplay Display { get; }
 
     public ITouchScreen TouchScreen { get; }
+
     public RotationType DisplayRotation => RotationType.Normal;
 
     public DesktopHardware(Desktop desktop)
