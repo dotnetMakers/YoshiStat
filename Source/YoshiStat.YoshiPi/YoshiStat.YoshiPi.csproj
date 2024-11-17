@@ -7,11 +7,15 @@
     <Nullable>enable</Nullable>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
+    <!--
     <ItemGroup>
         <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="*" />
         <PackageReference Include="YoshiMaker.YoshiPi" Version="*" />
     </ItemGroup>
+    -->
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\wilderness\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroLayout\Driver\Graphics.MicroLayout.csproj" />
+      <ProjectReference Include="..\..\..\..\yoshimoshi\yoshipi\Source\dotnet\Driver\YoshiPi.Hardware.csproj" />
       <ProjectReference Include="..\YoshiStat.Core\YoshiStat.Core.csproj" />
     </ItemGroup>
 </Project>

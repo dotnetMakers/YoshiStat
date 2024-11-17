@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoshiStat.Core;
+namespace YoshiStat;
 
 public interface IInputService
 {
@@ -8,4 +8,8 @@ public interface IInputService
     public event EventHandler? OnDecrementRequested;
     public event EventHandler? OnAcceptRequested;
     public event EventHandler? OnCancelRequested;
+
+    public event EventHandler? OnTestButton1Clicked;
+    public event EventHandler? OnTestButton2Clicked;
+
 }
