@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,11 +7,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+   <!--
   <ItemGroup>
-    <PackageReference Include="Meadow.Desktop" Version="1.14.0" />
+    <PackageReference Include="Meadow.Desktop" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Hid.Keyboard" Version="1.15.0" />
   </ItemGroup>
-
+    -->
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\wilderness\Meadow.Core\Source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj" />
+    <ProjectReference Include="..\..\..\..\wilderness\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.Keyboard\Driver\Sensors.Hid.Keyboard.csproj" />
     <ProjectReference Include="..\YoshiStat.Core\YoshiStat.Core.csproj" />
   </ItemGroup>
+
 </Project>

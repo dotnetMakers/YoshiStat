@@ -1,14 +1,23 @@
 ﻿using Meadow;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
+using Meadow.Foundation.Hmi;
+using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
+using System.IO;
+using System.Threading.Tasks;
+using static Meadow.Resolver;
 
 namespace YoshiStat.Core;
 
 internal class DisplayService : IDisplayService
 {
+    public event EventHandler? TestButton1Clicked;
+    public event EventHandler? TestButton2Clicked;
+
+    private ITouchScreen _touchScreen;
     private DisplayScreen _screen;
     private AbsoluteLayout _splashLayout;
     private AbsoluteLayout _dataLayout;
@@ -19,17 +28,39 @@ internal class DisplayService : IDisplayService
 
     private Font16x24 font16x24;
 
-    public DisplayService(IPixelDisplay display, RotationType rotation)
+    public DisplayService(IPixelDisplay display, ITouchScreen touchScreen, RotationType rotation)
     {
-        _screen = new DisplayScreen(display, rotation);
+        _screen = new DisplayScreen(display, rotation, touchScreen);
+        _touchScreen = touchScreen;
 
         font16x24 = new Font16x24();
 
-        LoadSplashScreen();
-
-        LoadDataScreen();
+        _screen = new DisplayScreen(
+            display,
+            rotation,
+            touchScreen);
 
         _screen.Controls.Add(_splashLayout, _dataLayout);
+    }
+
+    private async Task CheckTouchscreenCalibration(ICalibratableTouchscreen touchscreen, DisplayScreen screen)
+    {
+        var calfile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ts.cal"));
+
+        Log.Info($"Using calibration data at {calfile.FullName}");
+
+        var cal = new TouchscreenCalibrationService(screen, calfile);
+
+        var existing = cal.GetSavedCalibrationData();
+
+        if (existing != null)
+        {
+            touchscreen.SetCalibrationData(existing);
+        }
+        else
+        {
+            await cal.Calibrate(true);
+        }
     }
 
     private void LoadSplashScreen()
@@ -117,10 +148,27 @@ internal class DisplayService : IDisplayService
         _screen.Controls.Add(_dataLayout);
     }
 
-    public void ShowSplashScreen()
+    public async Task ShowCalibrationIfRequired()
+    {
+        if (_touchScreen == null)
+        {
+            Log.Warn("No touch screen available");
+        }
+        else if (_touchScreen is ICalibratableTouchscreen cts)
+        {
+            await CheckTouchscreenCalibration(cts, _screen);
+        }
+
+        LoadSplashScreen();
+        LoadDataScreen();
+    }
+
+    public async Task ShowSplashScreen()
     {
         _dataLayout.IsVisible = false;
         _splashLayout.IsVisible = true;
+
+        await Task.Delay(3000);
     }
 
     public void ShowDataScreen()
@@ -132,6 +180,16 @@ internal class DisplayService : IDisplayService
     public void UpdateTime()
     {
         _timeLabel.Text = DateTime.Now.ToString("hh:mm tt");
+    }
+
+    private void OnCoolClicked(object sender, EventArgs e)
+    {
+        TestButton2Clicked?.Invoke(this, e);
+    }
+
+    private void OnHeatClicked(object sender, EventArgs e)
+    {
+        TestButton1Clicked?.Invoke(this, e);
     }
 
     public void UpdateControlState(ControlState currentState)
