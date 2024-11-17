@@ -4,6 +4,12 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\splash.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\splash.bmp" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Meadow.Contracts" Version="1.14.0" />

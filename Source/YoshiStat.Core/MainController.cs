@@ -14,10 +14,12 @@ public class MainController
         _hardware = hardware;
     }
 
-    private void Initialize()
+    private async Task Initialize()
     {
-        // create services
         _displayService = new DisplayService(_hardware.Display, _hardware.DisplayRotation);
+        _displayService.ShowSplashScreen();
+        await Task.Delay(3000);
+        _displayService.ShowDataScreen();
 
         _sensorService = Resolver.Services.Get<ISensorService>()
             ?? throw new System.Exception("ISensorService not registered");
@@ -32,7 +34,7 @@ public class MainController
 
     public async Task Run()
     {
-        Initialize();
+        await Initialize();
 
         while (true)
         {

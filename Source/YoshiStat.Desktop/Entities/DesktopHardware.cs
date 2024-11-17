@@ -19,7 +19,7 @@ internal class DesktopHardware : IYoshiStatHardware
             throw new NotSupportedException();
         }
 
-        desktop.Display.Resize(320, 240, 3);
+        desktop.Display.Resize(320, 240, 2);
 
         Display = desktop.Display;
         TouchScreen = desktop.Display as ITouchScreen;

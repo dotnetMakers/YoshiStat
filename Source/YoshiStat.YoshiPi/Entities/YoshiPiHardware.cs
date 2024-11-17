@@ -18,5 +18,10 @@ internal class YoshiPiHardware : IYoshiStatHardware
     public YoshiPiHardware(IYoshiPiHardware hardware)
     {
         _hardware = hardware;
+
+        if (_hardware.Display is IColorInvertableDisplay cid)
+        {
+            cid.InvertDisplayColor(true);
+        }
     }
 }
