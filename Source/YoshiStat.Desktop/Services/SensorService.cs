@@ -1,45 +1,49 @@
-﻿using Meadow.Foundation.Sensors;
+﻿using Meadow;
+using Meadow.Foundation.Sensors;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
-using ISensorService = YoshiStat.Core.ISensorService;
 
 namespace YoshiStat;
 
-internal class InputService : IInputService
+internal class SensorService : Core.ISensorService
 {
-    public event EventHandler? OnIncrementRequested;
-    public event EventHandler? OnDecrementRequested;
-    public event EventHandler? OnAcceptRequested;
-    public event EventHandler? OnCancelRequested;
-    public event EventHandler? OnTestButton1Clicked;
-    public event EventHandler? OnTestButton2Clicked;
+    private ITemperatureSensor _temperatureSensor;
 
-    public InputService()
-    {
-    }
-}
+    private IHumiditySensor _humiditySensor;
 
-internal class SensorService : ISensorService
-{
     public event EventHandler<Temperature>? CurrentTemperatureChanged;
 
-    private SimulatedTemperatureSensor _tempSensor;
+    public event EventHandler<RelativeHumidity>? CurrentHumidityChanged;
+
+    public Temperature? CurrentTemperature => throw new NotImplementedException();
+
+    public RelativeHumidity? CurrentHumidity => throw new NotImplementedException();
 
     public SensorService()
     {
-        _tempSensor = new SimulatedTemperatureSensor(
+        var temperatureSensor = new SimulatedTemperatureSensor(
             initialTemperature: 68.Fahrenheit(),
             minimumTemperature: 66.Fahrenheit(),
             maximumTemperature: 70.Fahrenheit());
+        temperatureSensor.StartSimulation(SimulationBehavior.RandomWalk);
 
-        _tempSensor.StartSimulation(SimulationBehavior.RandomWalk);
-        _tempSensor.Updated += OnTempSensorUpdated;
+        _temperatureSensor = temperatureSensor;
+        _temperatureSensor.Updated += TemperatureSensorUpdated;
+
+        var humiditySensor = new SimulatedHumiditySensor();
+
+        _humiditySensor = humiditySensor;
+        _humiditySensor.Updated += HumiditySensorUpdated;
     }
 
-    private void OnTempSensorUpdated(object? sender, Meadow.IChangeResult<Temperature> e)
+    private void TemperatureSensorUpdated(object? sender, IChangeResult<Temperature> e)
     {
         CurrentTemperatureChanged?.Invoke(this, e.New);
     }
 
-    public Temperature? CurrentTemperature => _tempSensor.Temperature;
+    private void HumiditySensorUpdated(object? sender, IChangeResult<RelativeHumidity> e)
+    {
+        CurrentHumidityChanged?.Invoke(this, e.New);
+    }
 }

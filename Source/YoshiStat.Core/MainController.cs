@@ -15,13 +15,17 @@ public class MainController
         _hardware = hardware;
     }
 
-    private void Initialize()
+    private async Task Initialize()
     {
         // create services
         _displayService = new DisplayService(
             _hardware.Display,
             _hardware.TouchScreen,
             _hardware.DisplayRotation);
+
+        await _displayService.ShowCalibrationIfRequired();
+        await _displayService.ShowSplashScreen();
+        _displayService.ShowDataScreen();
 
         _sensorService = Resolver.Services.Get<ISensorService>()
             ?? throw new System.Exception("ISensorService not registered");
@@ -50,6 +54,7 @@ public class MainController
     private void OnTestButton2Clicked(object sender, System.EventArgs e)
     {
         _outputService.SetCoolState(true);
+        _sensorService.CurrentHumidityChanged += OnCurrentHumidityChanged;
     }
 
     private void OnCurrentTemperatureChanged(object sender, Meadow.Units.Temperature e)
@@ -57,9 +62,14 @@ public class MainController
         _displayService.UpdateCurrentTemperature(e);
     }
 
+    private void OnCurrentHumidityChanged(object sender, Meadow.Units.RelativeHumidity e)
+    {
+        _displayService.UpdateCurrentHumidity(e);
+    }
+
     public async Task Run()
     {
-        Initialize();
+        await Initialize();
 
         while (true)
         {

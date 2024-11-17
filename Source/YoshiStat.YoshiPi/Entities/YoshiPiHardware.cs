@@ -12,7 +12,9 @@ internal class YoshiPiHardware : IYoshiStatHardware
     private IYoshiPiHardware _hardware;
 
     public IPixelDisplay Display => _hardware.Display;
+
     public ITouchScreen TouchScreen => _hardware.Touchscreen;
+
     public RotationType DisplayRotation => RotationType._270Degrees;
 
     public IRelay HeatRelay => _hardware.Relay1;
@@ -23,5 +25,10 @@ internal class YoshiPiHardware : IYoshiStatHardware
     public YoshiPiHardware(IYoshiPiHardware hardware)
     {
         _hardware = hardware;
+
+        if (_hardware.Display is IColorInvertableDisplay cid)
+        {
+            cid.InvertDisplayColor(true);
+        }
     }
 }

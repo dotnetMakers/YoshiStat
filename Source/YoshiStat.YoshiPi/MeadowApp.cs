@@ -11,11 +11,11 @@ internal class MeadowApp : YoshiPiApp
 
     public override Task Initialize()
     {
-        Resolver.Log.Info("Creating sensor service...");
-        Resolver.Services.Create<SensorService, Core.ISensorService>();
-
         Resolver.Log.Info("Creating YoshiPi hardware...");
         _hardware = new YoshiPiHardware(Hardware);
+
+        Resolver.Log.Info("Creating sensor service...");
+        Resolver.Services.Create<SensorService, ISensorService>();
 
         Resolver.Log.Info("Creating Main Controller...");
         _mainController = new MainController(_hardware);

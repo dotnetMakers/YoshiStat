@@ -1,34 +1,49 @@
 ﻿using Meadow.Foundation.Sensors;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
-using ISensorService = YoshiStat.Core.ISensorService;
 
 namespace YoshiStat.YoshiPi;
 
-internal class SensorService : ISensorService
+internal class SensorService : Core.ISensorService
 {
+    private ITemperatureSensor _temperatureSensor;
+
+    private IHumiditySensor _humiditySensor;
+
     public event EventHandler<Temperature>? CurrentTemperatureChanged;
+
+    public event EventHandler<RelativeHumidity>? CurrentHumidityChanged;
 
     public Temperature? CurrentTemperature => throw new NotImplementedException();
 
-    private ITemperatureSensor _tempSensor;
+    public RelativeHumidity? CurrentHumidity => throw new NotImplementedException();
 
     public SensorService()
     {
-        var tempSensor = new SimulatedTemperatureSensor(
+        var temperatureSensor = new SimulatedTemperatureSensor(
             initialTemperature: 68.Fahrenheit(),
             minimumTemperature: 66.Fahrenheit(),
             maximumTemperature: 70.Fahrenheit());
+        temperatureSensor.StartSimulation(SimulationBehavior.RandomWalk);
 
-        tempSensor.StartSimulation(SimulationBehavior.RandomWalk);
+        _temperatureSensor = temperatureSensor;
+        _temperatureSensor.Updated += TemperatureSensorUpdated;
 
-        _tempSensor = tempSensor;
-        _tempSensor.Updated += OnTempSensorUpdated;
+        var humiditySensor = new SimulatedHumiditySensor();
+        humiditySensor.StartSimulation(SimulationBehavior.RandomWalk);
+
+        _humiditySensor = humiditySensor;
+        _humiditySensor.Updated += HumiditySensorUpdated;
     }
 
-    private void OnTempSensorUpdated(object? sender, Meadow.IChangeResult<Temperature> e)
+    private void TemperatureSensorUpdated(object? sender, Meadow.IChangeResult<Temperature> e)
     {
         CurrentTemperatureChanged?.Invoke(this, e.New);
     }
 
+    private void HumiditySensorUpdated(object? sender, Meadow.IChangeResult<RelativeHumidity> e)
+    {
+        CurrentHumidityChanged?.Invoke(this, e.New);
+    }
 }

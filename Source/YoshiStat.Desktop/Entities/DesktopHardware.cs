@@ -17,6 +17,7 @@ internal class DesktopHardware : IYoshiStatHardware
     public IPixelDisplay Display { get; }
 
     public ITouchScreen TouchScreen { get; }
+
     public RotationType DisplayRotation => RotationType.Normal;
 
     public IRelay HeatRelay { get; }
@@ -31,7 +32,7 @@ internal class DesktopHardware : IYoshiStatHardware
             throw new NotSupportedException();
         }
 
-        desktop.Display.Resize(320, 240, 3);
+        desktop.Display.Resize(320, 240, 2);
 
         HeatRelay = new SimulatedRelay("heat");
         HeatRelay.OnChanged += OnRelayChanged;
