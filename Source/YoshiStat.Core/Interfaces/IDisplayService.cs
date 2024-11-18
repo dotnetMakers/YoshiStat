@@ -7,10 +7,13 @@ namespace YoshiStat.Core;
 public interface IDisplayService
 {
     public event EventHandler? TestButton1Clicked;
+
     public event EventHandler? TestButton2Clicked;
 
     public Task ShowCalibrationIfRequired();
+
     public Task ShowSplashScreen();
+
     public void ShowDataScreen();
 
     public void UpdateCurrentTemperature(Temperature temperature);

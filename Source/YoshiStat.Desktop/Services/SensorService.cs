@@ -4,7 +4,7 @@ using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 
-namespace YoshiStat;
+namespace YoshiStat.DesktopApp;
 
 internal class SensorService : Core.ISensorService
 {

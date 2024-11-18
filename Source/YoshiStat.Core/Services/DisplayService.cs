@@ -71,12 +71,7 @@ internal class DisplayService : IDisplayService
         };
 
         var image = Image.LoadFromResource("YoshiStat.Core.Resources.splash.bmp");
-        var displayImage = new Picture(0, 0, _screen.Width, _screen.Height, image)
-        {
-            BackColor = Color.FromHex("F39E6C"),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-        };
+        var displayImage = new Picture(0, 0, _screen.Width, _screen.Height, image);
 
         _splashLayout.Controls.Add(displayImage);
 

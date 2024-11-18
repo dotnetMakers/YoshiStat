@@ -7,6 +7,7 @@ public interface ISensorService
 {
     event EventHandler<Temperature>? CurrentTemperatureChanged;
 
+
     event EventHandler<RelativeHumidity>? CurrentHumidityChanged;
 
     public Temperature? CurrentTemperature { get; }

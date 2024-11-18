@@ -14,7 +14,7 @@ internal class MeadowApp : App<Desktop>
         Resolver.Log.Info("Creating Desktop hardware...");
         _hardware = new DesktopHardware(Device);
 
-        //Resolver.Log.Info("Creating sensor service...");
+        Resolver.Log.Info("Creating sensor service...");
         Resolver.Services.Create<SensorService, ISensorService>();
 
         Resolver.Log.Info("Creating Main Controller...");
@@ -25,6 +25,8 @@ internal class MeadowApp : App<Desktop>
 
     public override Task Run()
     {
+        Resolver.Log.Info("Run");
+
         // this must be spawned in a worker because the UI needs the main thread
         _ = _mainController.Run();
 

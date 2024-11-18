@@ -1,7 +1,6 @@
 ﻿using Meadow.Peripherals.Relays;
-using YoshiStat.Core;
 
-namespace YoshiStat;
+namespace YoshiStat.Core;
 
 internal class OutputService : IOutputService
 {
