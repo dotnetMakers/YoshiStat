@@ -12,14 +12,10 @@ namespace YoshiStat.DesktopApp;
 
 internal class DesktopHardware : IYoshiStatHardware
 {
-    private Keyboard _keyboard;
-
+    public Keyboard Keyboard { get; }
     public IPixelDisplay Display { get; }
-
     public ITouchScreen TouchScreen { get; }
-
     public RotationType DisplayRotation => RotationType.Normal;
-
     public IRelay HeatRelay { get; }
     public IRelay CoolRelay { get; }
     public IButton TestButton1 { get; }
@@ -40,12 +36,12 @@ internal class DesktopHardware : IYoshiStatHardware
         CoolRelay = new SimulatedRelay("cool");
         CoolRelay.OnChanged += OnRelayChanged;
 
-        _keyboard = new Keyboard();
+        Keyboard = new Keyboard();
 
         TestButton1 = new PushButton(
-            _keyboard.Pins.H);
+            Keyboard.Pins.H);
         TestButton2 = new PushButton(
-            _keyboard.Pins.C);
+            Keyboard.Pins.C);
 
         Display = desktop.Display;
         TouchScreen = desktop.Display as ITouchScreen;

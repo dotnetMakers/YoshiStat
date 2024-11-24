@@ -20,11 +20,12 @@ internal class DisplayService : IDisplayService
     private ITouchScreen _touchScreen;
     private DisplayScreen _screen;
     private AbsoluteLayout _splashLayout;
-    private AbsoluteLayout _dataLayout;
+    private AbsoluteLayout _homeLayout;
 
     private Label _currentHumidityLabel;
     private Label _currentTempLabel;
     private Label _timeLabel;
+    private Label _stateLabel;
 
     private Font16x24 font16x24;
 
@@ -40,7 +41,7 @@ internal class DisplayService : IDisplayService
             rotation,
             touchScreen);
 
-        _screen.Controls.Add(_splashLayout, _dataLayout);
+        _screen.Controls.Add(_splashLayout, _homeLayout);
     }
 
     private async Task CheckTouchscreenCalibration(ICalibratableTouchscreen touchscreen, DisplayScreen screen)
@@ -91,14 +92,14 @@ internal class DisplayService : IDisplayService
         _screen.Controls.Add(_splashLayout);
     }
 
-    private void LoadDataScreen()
+    private void LoadHomeScreen()
     {
-        _dataLayout = new AbsoluteLayout(_screen.Width, _screen.Height)
+        _homeLayout = new AbsoluteLayout(_screen.Width, _screen.Height)
         {
             IsVisible = false
         };
 
-        _dataLayout.Controls.Add(new GradientBox(
+        _homeLayout.Controls.Add(new GradientBox(
             left: 0,
             top: 0,
             width: _screen.Width,
@@ -111,19 +112,18 @@ internal class DisplayService : IDisplayService
         _currentHumidityLabel = new Label(
             5,
             41,
-            _dataLayout.Width - 10,
+            _homeLayout.Width - 10,
             font16x24.Height)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             Font = font16x24,
             Text = "55%"
         };
-        _dataLayout.Controls.Add(_currentHumidityLabel);
 
         _currentTempLabel = new Label(
             5,
             96,
-            _dataLayout.Width - 10,
+            _homeLayout.Width - 10,
             font16x24.Height * 2)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -131,21 +131,35 @@ internal class DisplayService : IDisplayService
             ScaleFactor = ScaleFactor.X2,
             Text = "-°F"
         };
-        _dataLayout.Controls.Add(_currentTempLabel);
 
         _timeLabel = new Label(
             5,
             175,
-            _dataLayout.Width - 10,
+            _homeLayout.Width - 10,
             30)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             Font = font16x24,
             Text = "11:11PM"
         };
-        _dataLayout.Controls.Add(_timeLabel);
 
-        _screen.Controls.Add(_dataLayout);
+        _stateLabel = new Label(
+            _homeLayout.Width - 35,
+            5,
+            30,
+            30)
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Font = font16x24,
+            Text = "-"
+        };
+
+        _homeLayout.Controls.Add(_currentHumidityLabel);
+        _homeLayout.Controls.Add(_currentTempLabel);
+        _homeLayout.Controls.Add(_timeLabel);
+        _homeLayout.Controls.Add(_stateLabel);
+
+        _screen.Controls.Add(_homeLayout);
     }
 
     public async Task ShowCalibrationIfRequired()
@@ -160,12 +174,12 @@ internal class DisplayService : IDisplayService
         }
 
         LoadSplashScreen();
-        LoadDataScreen();
+        LoadHomeScreen();
     }
 
     public async Task ShowSplashScreen()
     {
-        _dataLayout.IsVisible = false;
+        _homeLayout.IsVisible = false;
         _splashLayout.IsVisible = true;
 
         await Task.Delay(3000);
@@ -174,7 +188,7 @@ internal class DisplayService : IDisplayService
     public void ShowDataScreen()
     {
         _splashLayout.IsVisible = false;
-        _dataLayout.IsVisible = true;
+        _homeLayout.IsVisible = true;
     }
 
     public void UpdateTime()
@@ -194,12 +208,17 @@ internal class DisplayService : IDisplayService
 
     public void UpdateControlState(ControlState currentState)
     {
-        throw new NotImplementedException();
+        _stateLabel.Text = currentState switch
+        {
+            ControlState.Heating => "H",
+            ControlState.Cooling => "C",
+            _ => "-"
+        };
     }
 
     public void UpdateCurrentTemperature(Temperature temperature)
     {
-        _currentTempLabel.Text = $"{temperature.Fahrenheit:N0}°F";
+        _currentTempLabel.Text = $"{temperature.Fahrenheit:N1}°F";
     }
 
     public void UpdateCurrentHumidity(RelativeHumidity humidity)
