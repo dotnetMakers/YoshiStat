@@ -12,10 +12,12 @@ using static Meadow.Resolver;
 
 namespace YoshiStat.Core;
 
-internal class DisplayService : IDisplayService
+internal partial class DisplayService : IDisplayService
 {
     public event EventHandler? TestButton1Clicked;
     public event EventHandler? TestButton2Clicked;
+
+    private ISettingsService _settings;
 
     private ITouchScreen _touchScreen;
     private DisplayScreen _screen;
@@ -26,11 +28,18 @@ internal class DisplayService : IDisplayService
     private Label _currentTempLabel;
     private Label _timeLabel;
     private Label _stateLabel;
+    private Button _showAppSettingsButton;
 
     private Font16x24 font16x24;
 
-    public DisplayService(IPixelDisplay display, ITouchScreen touchScreen, RotationType rotation)
+    public DisplayService(
+        IPixelDisplay display,
+        ITouchScreen touchScreen,
+        RotationType rotation,
+        ISettingsService settings)
     {
+        _settings = settings;
+
         _screen = new DisplayScreen(display, rotation, touchScreen);
         _touchScreen = touchScreen;
 
@@ -131,6 +140,7 @@ internal class DisplayService : IDisplayService
             ScaleFactor = ScaleFactor.X2,
             Text = "-°F"
         };
+        _currentTempLabel.Clicked += OnCurrentTempLabelClicked;
 
         _timeLabel = new Label(
             5,
@@ -154,12 +164,33 @@ internal class DisplayService : IDisplayService
             Text = "-"
         };
 
+        _showAppSettingsButton = new Button(
+            5,
+            _homeLayout.Height - 35,
+            100,
+            30)
+        {
+            Text = "settings"
+        };
+        _showAppSettingsButton.Clicked += OnShowAppSettingsButtonClicked;
+
         _homeLayout.Controls.Add(_currentHumidityLabel);
         _homeLayout.Controls.Add(_currentTempLabel);
         _homeLayout.Controls.Add(_timeLabel);
         _homeLayout.Controls.Add(_stateLabel);
+        _homeLayout.Controls.Add(_showAppSettingsButton);
 
         _screen.Controls.Add(_homeLayout);
+    }
+
+    private void OnCurrentTempLabelClicked(object sender, EventArgs e)
+    {
+        _ = ShowSetpointScreen(_settings.GetCurrentSetpoint());
+    }
+
+    private void OnShowAppSettingsButtonClicked(object sender, EventArgs e)
+    {
+        _ = ShowAppSettingsScreen();
     }
 
     public async Task ShowCalibrationIfRequired()
@@ -173,22 +204,33 @@ internal class DisplayService : IDisplayService
             await CheckTouchscreenCalibration(cts, _screen);
         }
 
+        LoadAllLayouts();
+    }
+
+    private void LoadAllLayouts()
+    {
         LoadSplashScreen();
         LoadHomeScreen();
+        LoadSetpointScreen();
+        LoadAppSettingsScreen();
     }
 
     public async Task ShowSplashScreen()
     {
         _homeLayout.IsVisible = false;
         _splashLayout.IsVisible = true;
+        _appSettingsLayout.IsVisible = false;
+        _setpointLayout.IsVisible = false;
 
         await Task.Delay(3000);
     }
 
-    public void ShowDataScreen()
+    public void ShowHomeScreen()
     {
         _splashLayout.IsVisible = false;
         _homeLayout.IsVisible = true;
+        _setpointLayout.IsVisible = false;
+        _appSettingsLayout.IsVisible = false;
     }
 
     public void UpdateTime()

@@ -11,7 +11,7 @@ public interface IDisplayService
 
     public Task ShowCalibrationIfRequired();
     public Task ShowSplashScreen();
-    public void ShowDataScreen();
+    public void ShowHomeScreen();
 
     public void UpdateCurrentTemperature(Temperature temperature);
 

@@ -11,13 +11,16 @@ public class MainController
     private IDisplayService _displayService;
     private ISensorService _sensorService;
     private IOutputService _outputService;
+    private ISettingsService _settingsService;
+
     private ControlState _currentState;
     public DateTimeOffset? _lastHeatTime;
     public DateTimeOffset? _lastCoolTime;
+    private int _controlLoopTime = 1000;
 
     // TODO: initialize from config
     public TimeSpan ChangeoverTime { get; set; } = TimeSpan.FromHours(2);
-    public Temperature SetPoint { get; set; } = 66.Fahrenheit();
+    public Temperature SetPoint { get; private set; }
     public Temperature Deadband { get; set; } = 1.Fahrenheit();
 
     public MainController(IYoshiStatHardware hardware)
@@ -28,14 +31,19 @@ public class MainController
     private async Task Initialize()
     {
         // create services
+        _settingsService = new SettingsService();
+        SetPoint = _settingsService.GetCurrentSetpoint();
+        _settingsService.SetpointChanged += OnSetpointChanged;
+
         _displayService = new DisplayService(
             _hardware.Display,
             _hardware.TouchScreen,
-            _hardware.DisplayRotation);
+            _hardware.DisplayRotation,
+            _settingsService);
 
         await _displayService.ShowCalibrationIfRequired();
         await _displayService.ShowSplashScreen();
-        _displayService.ShowDataScreen();
+        _displayService.ShowHomeScreen();
 
         _sensorService = Resolver.Services.Get<ISensorService>()
             ?? throw new System.Exception("ISensorService not registered");
@@ -50,6 +58,18 @@ public class MainController
         }
 
         InitializeEvents();
+    }
+
+    private void OnSetpointChanged(object sender, Temperature e)
+    {
+        SetPoint = e;
+        Task.Run(async () =>
+        {
+            await Task.Delay(_controlLoopTime * 3);
+
+            _lastCoolTime = null;
+            _lastHeatTime = null;
+        });
     }
 
     private void InitializeEvents()
@@ -114,7 +134,7 @@ public class MainController
 
         while (true)
         {
-            await Task.Delay(1000);
+            await Task.Delay(_controlLoopTime);
 
             // state control algorithm
             var currentTemp = _sensorService.CurrentTemperature;
