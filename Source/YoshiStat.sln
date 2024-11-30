@@ -41,6 +41,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bh1900N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CThermo13", "..\..\..\wilderness\Meadow.Foundation.mikroBUS\Source\CThermo13\Driver\CThermo13.csproj", "{08A2C6F9-A783-44B2-B2B6-A221AD274C90}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{4169678E-6034-4324-B33F-C351974AFEE0}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
