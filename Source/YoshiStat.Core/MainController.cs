@@ -12,11 +12,13 @@ public class MainController
     private ISensorService _sensorService;
     private IOutputService _outputService;
     private ISettingsService _settingsService;
+    private TimeService _timeService;
 
     private ControlState _currentState;
     public DateTimeOffset? _lastHeatTime;
     public DateTimeOffset? _lastCoolTime;
     private int _controlLoopTime = 1000;
+    private int _lastMinute = -1;
 
     // TODO: initialize from config
     public TimeSpan ChangeoverTime { get; set; } = TimeSpan.FromHours(2);
@@ -35,11 +37,14 @@ public class MainController
         SetPoint = _settingsService.GetCurrentSetpoint();
         _settingsService.SetpointChanged += OnSetpointChanged;
 
+        _timeService = new TimeService(_settingsService);
+
         _displayService = new DisplayService(
             _hardware.Display,
             _hardware.TouchScreen,
             _hardware.DisplayRotation,
-            _settingsService);
+            _settingsService,
+            _timeService);
 
         await _displayService.ShowCalibrationIfRequired();
         await _displayService.ShowSplashScreen();
@@ -130,11 +135,16 @@ public class MainController
     {
         await Initialize();
 
-        var i = 0;
-
         while (true)
         {
             await Task.Delay(_controlLoopTime);
+
+            var currentMinute = DateTimeOffset.UtcNow.Minute;
+            if (currentMinute != _lastMinute)
+            {
+                _displayService.UpdateTime();
+                _lastMinute = currentMinute;
+            }
 
             // state control algorithm
             var currentTemp = _sensorService.CurrentTemperature;

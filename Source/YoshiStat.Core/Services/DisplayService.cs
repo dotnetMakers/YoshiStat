@@ -18,6 +18,7 @@ internal partial class DisplayService : IDisplayService
     public event EventHandler? TestButton2Clicked;
 
     private ISettingsService _settings;
+    private TimeService _timeService;
 
     private ITouchScreen _touchScreen;
     private DisplayScreen _screen;
@@ -30,20 +31,26 @@ internal partial class DisplayService : IDisplayService
     private Label _stateLabel;
     private Button _showAppSettingsButton;
 
-    private Font16x24 font16x24;
+    private Font16x24 _font16x24;
+    private IFont _pageTitleFont;
+
+    private Temperature? _lastTemperature;
 
     public DisplayService(
         IPixelDisplay display,
         ITouchScreen touchScreen,
         RotationType rotation,
-        ISettingsService settings)
+        ISettingsService settings,
+        TimeService timeService)
     {
+        _timeService = timeService;
         _settings = settings;
 
         _screen = new DisplayScreen(display, rotation, touchScreen);
         _touchScreen = touchScreen;
 
-        font16x24 = new Font16x24();
+        _font16x24 = new Font16x24();
+        _pageTitleFont = new Font16x24();
 
         _screen = new DisplayScreen(
             display,
@@ -111,8 +118,8 @@ internal partial class DisplayService : IDisplayService
         _homeLayout.Controls.Add(new GradientBox(
             left: 0,
             top: 0,
-            width: _screen.Width,
-            height: _screen.Height)
+            width: _homeLayout.Width,
+            height: _homeLayout.Height)
         {
             StartColor = Color.FromHex("1C3242"),
             EndColor = Color.FromHex("021323")
@@ -122,10 +129,10 @@ internal partial class DisplayService : IDisplayService
             5,
             41,
             _homeLayout.Width - 10,
-            font16x24.Height)
+            _font16x24.Height)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
-            Font = font16x24,
+            Font = _font16x24,
             Text = "55%"
         };
 
@@ -133,10 +140,10 @@ internal partial class DisplayService : IDisplayService
             5,
             96,
             _homeLayout.Width - 10,
-            font16x24.Height * 2)
+            _font16x24.Height * 2)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
-            Font = font16x24,
+            Font = _font16x24,
             ScaleFactor = ScaleFactor.X2,
             Text = "-°F"
         };
@@ -149,7 +156,7 @@ internal partial class DisplayService : IDisplayService
             30)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
-            Font = font16x24,
+            Font = _font16x24,
             Text = "11:11PM"
         };
 
@@ -160,7 +167,7 @@ internal partial class DisplayService : IDisplayService
             30)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
-            Font = font16x24,
+            Font = _font16x24,
             Text = "-"
         };
 
@@ -213,6 +220,14 @@ internal partial class DisplayService : IDisplayService
         LoadHomeScreen();
         LoadSetpointScreen();
         LoadAppSettingsScreen();
+
+        _settings.DisplayUnitsChanged += (s, e) =>
+        {
+            if (_lastTemperature != null)
+            {
+                UpdateCurrentTemperature(_lastTemperature.Value);
+            }
+        };
     }
 
     public async Task ShowSplashScreen()
@@ -231,11 +246,12 @@ internal partial class DisplayService : IDisplayService
         _homeLayout.IsVisible = true;
         _setpointLayout.IsVisible = false;
         _appSettingsLayout.IsVisible = false;
+        UpdateTime();
     }
 
     public void UpdateTime()
     {
-        _timeLabel.Text = DateTime.Now.ToString("hh:mm tt");
+        _timeLabel.Text = _timeService.GetFormattedLocalTime();
     }
 
     private void OnCoolClicked(object sender, EventArgs e)
@@ -260,7 +276,17 @@ internal partial class DisplayService : IDisplayService
 
     public void UpdateCurrentTemperature(Temperature temperature)
     {
-        _currentTempLabel.Text = $"{temperature.Fahrenheit:N1}°F";
+        _lastTemperature = temperature;
+
+        switch (_settings.GetDisplayUnits())
+        {
+            case Temperature.UnitType.Fahrenheit:
+                _currentTempLabel.Text = $"{temperature.Fahrenheit:N1}°F";
+                break;
+            default:
+                _currentTempLabel.Text = $"{temperature.Celsius:N1}°C";
+                break;
+        }
     }
 
     public void UpdateCurrentHumidity(RelativeHumidity humidity)

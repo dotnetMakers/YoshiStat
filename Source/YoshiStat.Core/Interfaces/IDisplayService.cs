@@ -13,6 +13,8 @@ public interface IDisplayService
     public Task ShowSplashScreen();
     public void ShowHomeScreen();
 
+    void UpdateTime();
+
     public void UpdateCurrentTemperature(Temperature temperature);
 
     public void UpdateCurrentHumidity(RelativeHumidity humidity);

@@ -33,10 +33,10 @@ internal partial class DisplayService : IDisplayService
             5,
             96,
             200,
-            font16x24.Height * 2)
+            _font16x24.Height * 2)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
-            Font = font16x24,
+            Font = _font16x24,
             ScaleFactor = ScaleFactor.X2,
             Text = $"{_currentSetpoint.Fahrenheit:N0}°F"
         };
